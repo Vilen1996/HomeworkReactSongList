@@ -1,70 +1,35 @@
+import { PlayList } from "./Playlist";
+import { SongList } from "./SongList";
 import React, { useState } from "react";
 import "./App.css";
-function App(props) {
-  const [photos, setPhotos] = useState([
-    {
-      id: 101,
-      url: "https://wallpapers.com/images/featured/prague-l8aujv2epf7ojy0r.jpg",
-    },
-    { id: 102, url: "https://images8.alphacoders.com/374/374028.jpg" },
-    {
-      id: 103,
-      url: "https://images7.alphacoders.com/487/thumb-1920-487159.jpg",
-    },
-    {
-      id: 104,
-      url: "https://wallpapers.com/images/hd/prague-church-at-dawn-500ebpx4fnhzqxni.jpg",
-    },
-    {
-      id: 105,
-      url: "https://wallpapers.com/images/hd/prague-churches-and-spires-kr2ll9pmha86r9tt.jpg",
-    },
-    {
-      id: 106,
-      url: "https://c4.wallpaperflare.com/wallpaper/150/315/757/prague-czechia-czech-republic-europe-wallpaper-preview.jpg",
-    },
-    { id: 107, url: "https://wallpapers-hub.art/wallpaper-images/41279.jpg" },
-    { id: 108, url: "https://wallpaper.dog/large/20388524.jpg" },
+
+function App() {
+  const [playlist, setPlaylist] = useState([]);
+  const [songs, setSongs] = useState([
+    { id: 101, title: "A", author: "Armine", duration: 8 },
+    { id: 102, title: "B", author: "Hrach", duration: 7 },
+    { id: 103, title: "C", author: "Artak", duration: 6 },
+    { id: 104, title: "D", author: "Samvel", duration: 5 },
   ]);
-  const [index, setIndex] = useState(0);
-  const handleNext = () => {
-    if (index < photos.length - 1) {
-      setIndex(index + 1);
-    } else {
-      setIndex(index - index);
+  const removeSong = (id) => {
+    setSongs(songs.filter((x) => x.id != id));
+    setPlaylist(playlist.filter((x) => x.id !== id));
+  };
+  const moveSong = (id) => {
+    const songToMove = songs.find((x) => x.id === id);
+    if (songToMove && !playlist.includes(songToMove)) {
+      setPlaylist([...playlist, songToMove]);
     }
   };
-  const handlePrev = () => {
-    if (index > 0) {
-      setIndex(index - 1);
-    } else {
-      setIndex(index + photos.length - 1);
-    }
-  };
-  const handleClick = (i) => {
-    setIndex(i);
+  const moveDown = (id) => {
+    const songToMove = playlist.find((x) => x.id === id);
+    setPlaylist([...playlist.filter((x) => x.id !== id), songToMove]);
   };
   return (
-    <div>
-      <img id="main" src={photos[index].url} />
-      <div>
-        <button onClick={handlePrev}>prev</button>
-        <button onClick={handleNext}>next</button>
-      </div>
-      <div id="timeline">
-        {photos.map((elm, i) => {
-          let style = i == index ? "active" : "";
-          return (
-            <img
-              key={elm.id}
-              src={elm.url}
-              className={style}
-              onClick={() => handleClick(i)}
-            />
-          );
-        })}
-      </div>
-    </div>
+    <>
+      <SongList items={songs} onDelete={removeSong} moveSong={moveSong} />
+      <PlayList items={playlist} moveDown={moveDown} />
+    </>
   );
 }
 
